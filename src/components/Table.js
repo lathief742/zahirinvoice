@@ -1,25 +1,30 @@
-export default function Table() {
+import React, { Fragment } from 'react';
+
+export default function Table({ list }) {
     return (
         <>
         <div className="my-5">
-            <table width="100%">
-                <thead>
-                    <tr className="bg-gray-100 p-1">
-                        <td>Description</td>
-                        <td>Quantity</td>
-                        <td>Price</td>
-                        <td>Amount</td>
-                    </tr>
-                </thead>
-            
+        <table width="100%" className="mb-10">
+<thead>
+            <tr className="bg-gray-100 p-1">
+                <td className="font-bold">Description</td>
+                <td className="font-bold">Quantity</td>
+                <td className="font-bold">Price</td>
+                <td className="font-bold">Amount</td>
+            </tr>
+        </thead>
+    {list.map(({ id, description, quantity, price, amount}) =>(
+        <React.Fragment key={id}>
 <tbody>
-    <tr>
-        <td>lorem ipsum dolor si amet</td>
-        <td>50</td>
-        <td>Rp.20000000</td>
-        <td>999</td>
-    </tr>
+<tr>
+<td>{description}</td>
+<td>{quantity}</td>
+<td>{price}</td>
+<td>{amount}</td>
+</tr>
 </tbody>
+        </React.Fragment>
+    ) )}
 </table>
         </div>
         </>

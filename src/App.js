@@ -6,6 +6,7 @@ import MainDetails from "./components/MainDetails"
 import ClientDetails from "./components/ClientDetails"
 import Header from "./components/Header"
 import Dates from "./components/Dates"
+import TableForm from "./components/TableForm"
 
 
 
@@ -24,6 +25,12 @@ const [invoiceNumber, setInvoiceNumber] = useState("")
 const [invoiceDate, setinvoiceDate] = useState("")
 const [dueDate, setdueDate] = useState("")
 const [notes, setNotes] = useState("")
+const [description, setDescription] = useState("")
+const [quantity, setQuantity] = useState("")
+const [price, setPrice] = useState("")
+const [amount, setAmount] = useState("")
+const [list, setList] = useState([])
+
 
 
 
@@ -52,7 +59,13 @@ const handlePrint = () => {
     invoiceDate={invoiceDate} 
     dueDate={dueDate}/>
 
-    <Table />
+    <Table 
+    description={description}
+    amount={amount}
+    price={price}
+    quantity={quantity}
+    list={list}
+    setList={setList}/>
 
     <Notes notes={notes}/>
 
@@ -242,6 +255,23 @@ const handlePrint = () => {
       />
      </div>
 </article>
+
+{/* TABLE FORM */}
+<article>
+  <TableForm 
+  description={description} 
+  setDescription={setDescription}
+  quantity={quantity}
+  setQuantity={setQuantity} 
+  price={price}
+  setPrice={setPrice}
+  amount={amount} 
+  setAmount={setAmount}
+  list={list}
+  setList={setList}/>
+</article>
+
+
 
 <label htmlFor="notes">Additional Notes</label>
 <textarea
