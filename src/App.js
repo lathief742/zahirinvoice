@@ -34,7 +34,7 @@ const handlePrint = () => {
 
   return (
     <>
-    <main className="m-5 p-5 xl:max-w-4xl xl:mx-auto rounded shadow bg-white">
+    <main className="m-5 p-5 md:max-w-xl md:mx-auto lg:max-w-2xl xl:max-w-4xl rounded shadow bg-white">
     {showInvoice ? (
     <div>
     <Header handlePrint={handlePrint}/>
@@ -77,7 +77,9 @@ const handlePrint = () => {
       client address, invoice number, 
       invoice date, due date, notes*/}
      <div className="flex flex-col justify-center">
-     <label htmlFor="name">Enter your name</label>
+     <article className="md:grid grid-cols-2 gap-10">
+    <div className="flex flex-col">
+    <label htmlFor="name">Your full name</label>
      <input 
       type="text" 
       name="text" 
@@ -87,7 +89,9 @@ const handlePrint = () => {
       value={name}
       onChange={(e) => setName(e.target.value)}
       />
+    </div>
 
+     <div className="flex flex-col">
      <label htmlFor="address">Enter your address</label>
      <input 
       type="text" 
@@ -98,7 +102,11 @@ const handlePrint = () => {
       value={address}
       onChange={(e) => setAddress(e.target.value)}
       />
+     </div>
+     </article>
 
+     <article className="md:grid grid-cols-3 gap-10">
+     <div className="flex flex-col">
      <label htmlFor="email">Enter your email</label>
      <input 
       type="email" 
@@ -109,7 +117,9 @@ const handlePrint = () => {
       value={email}
       onChange={(e) => setEmail(e.target.value)}
       />
+     </div>
 
+     <div className="flex flex-col">
      <label htmlFor="website">Enter your website</label>
      <input 
       type="url" 
@@ -120,10 +130,12 @@ const handlePrint = () => {
       value={website}
       onChange={(e) => setWebsite(e.target.value)}
       />
+     </div>
 
+     <div className="flex flex-col">
      <label htmlFor="phone">Enter your phone</label>
      <input 
-      type="url" 
+      type="text"
       name="phone" 
       id="phone" 
       placeholder="Enter your phone"
@@ -131,7 +143,11 @@ const handlePrint = () => {
       value={phone}
       onChange={(e) => setPhone(e.target.value)}
       />
+     </div>
+     </article>
 
+     <article className="md:grid grid-cols-2 gap-10">
+     <div className="flex flex-col">
      <label htmlFor="bankName">Enter your bank name</label>
      <input 
       type="text" 
@@ -142,7 +158,9 @@ const handlePrint = () => {
       value={bankName}
       onChange={(e) => setBankName(e.target.value)}
       />
+     </div>
 
+     <div className="flex flex-col">
      <label htmlFor="banKAccount">Enter your bank account number</label>
      <input 
       type="text" 
@@ -153,7 +171,11 @@ const handlePrint = () => {
       value={banKAccount}
       onChange={(e) => setBankAccount(e.target.value)}
       />
+     </div>
+     </article>
 
+     <article className="md:grid grid-cols-2 gap-10 md:mt-16">
+     <div className="flex flex-col">
      <label htmlFor="clientName">Enter your client's name</label>
      <input 
       type="text" 
@@ -164,7 +186,9 @@ const handlePrint = () => {
       value={clientName}
       onChange={(e) => setClientName(e.target.value)}
       />
+     </div>
 
+     <div className="flex flex-col">
      <label htmlFor="clientAddress">Enter your client's address</label>
      <input 
       type="text" 
@@ -175,7 +199,11 @@ const handlePrint = () => {
       value={clientAddress}
       onChange={(e) => setClientAddress(e.target.value)}
       />
+     </div>
+     </article>
 
+     <article className="md:grid grid-cols-3 gap-10">
+     <div className="flex flex-col">
      <label htmlFor="invoiceNumber">Invoice Number</label>
      <input 
       type="text" 
@@ -186,7 +214,9 @@ const handlePrint = () => {
       value={invoiceNumber}
       onChange={(e) => setInvoiceNumber(e.target.value)}
       />
-      
+     </div>
+     
+     <div className="flex flex-col">
      <label htmlFor="invoiceDate">Invoice Date</label>
      <input 
       type="date" 
@@ -197,7 +227,9 @@ const handlePrint = () => {
       value={invoiceDate}
       onChange={(e) => setinvoiceDate(e.target.value)}
       />
-
+     </div>
+     
+     <div className="flex flex-col">
      <label htmlFor="dueDate">Due Date</label>
      <input 
       type="date" 
@@ -208,6 +240,8 @@ const handlePrint = () => {
       value={dueDate}
       onChange={(e) => setdueDate(e.target.value)}
       />
+     </div>
+</article>
 
 <label htmlFor="notes">Additional Notes</label>
 <textarea
@@ -219,13 +253,15 @@ const handlePrint = () => {
  value={notes} 
  onChange={(e) => setNotes(e.target.value)}>
  </textarea>
+     
+
       <button onClick={() => setShowInvoice(true)} className="bg-blue-500 text-white font-bold py-2 px-8 rounded shadow 
       border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 
       transition-all duration-300">Preview Invoice</button>
      </div>
+     
       </>
-    )
-}
+    )}
     </main>
     </>
   );
