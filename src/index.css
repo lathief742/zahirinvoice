@@ -15,7 +15,11 @@ label {
   color: #383838;
 }
 
-input, textarea {
+#name, #address, #email, #website, #logoFile,
+#phone, #bankName, #bankAccount, #clientName,
+#clientAddress, #invoiceNumber, #invoiceDate, #dueDate,
+#discount, #tax, #shipping, #notes,
+#description, #quantity, #price, textarea {
   background-color: #f1f1f1;
   padding: 0.5rem;
   border-radius: 0.2rem;
@@ -23,16 +27,29 @@ input, textarea {
   color: #616161;
 }
 
-#logo {
-  width: 8rem;
-  height: 8rem;
-}
-
-
 .footer li{
   margin: 0.5rem 0.2rem;
 }
 
 button {
   user-select: none;
+}
+
+#description, #quantity, #price {
+  background-color: white;
+  border: solid black 1px;
+  width: 10rem;
+}
+
+#titlename {
+  background-color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #383838;
+  margin-bottom: 0.3rem;
+  
+}
+
+#discount, #tax, #shipping {
+  width: 7rem;
 }

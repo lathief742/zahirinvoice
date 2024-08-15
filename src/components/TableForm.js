@@ -54,17 +54,7 @@ export default function TableForm({
   }, [amount, price, quantity, setAmount])
 
 //   Calculate total amount of items in table
-useEffect(() => {
-    let rows = document.querySelectorAll(".amount");
-let sum = 0;
 
-for(let i = 0; i < rows.length; i++) {
-    if (rows[i].className === "amount") {
-        sum += isNaN(rows[i].innerHTML) ? 0 : parseInt(rows[i].innerHTML);
-        setTotal(sum);
-    }
-}
-})
 
 
 
@@ -83,19 +73,19 @@ const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
 
     return (
     <>
-     <form onSubmit={handleSubmit}>
-     <div className="flex flex-col md:mt-16">
-     <label htmlFor="description">Item description</label>
+
+<form onSubmit={handleSubmit}>
+     <div className="md:grid grid-cols-4 gap-10">
+     <div className="flex flex-col">
+     <label htmlFor="description">Item</label>
       <input type="text" name="description" 
       id="description" 
       placeholder="Item description"
       value={description} 
       onChange={(e) => setDescription(e.target.value)} />
      </div>
-
-     <div className="md:grid grid-cols-3 gap-10">
      <div className="flex flex-col">
-     <label htmlFor="quantity">Quantity</label>
+     <label htmlFor="quantity">Kuantitas</label>
       <input type="text" name="quantity" 
       id="quantity" 
       placeholder="Quantity"
@@ -104,7 +94,7 @@ const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
      </div>
 
      <div className="flex flex-col">
-     <label htmlFor="price">Price</label>
+     <label htmlFor="price">Harga</label>
       <input type="text" name="price" 
       id="price" 
       placeholder="Item price"
@@ -113,10 +103,11 @@ const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
      </div>
 
      <div className="flex flex-col">
-        <label htmlFor="amount">Amount</label>
+        <label htmlFor="amount">Jumlah</label>
         <p>{amount}</p>
      </div>
      </div>
+     
      <button type="submit" className="mb-5 bg-blue-500 text-white font-bold py-2 px-8 rounded shadow 
       border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 
       transition-all duration-300">
@@ -124,15 +115,17 @@ const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
      </form>
 
 {/* Table items */}
+
 <table width="100%" className="mb-10">
 <thead>
             <tr className="bg-gray-100 p-1">
-                <td className="">Description</td>
-                <td className="">Quantity</td>
-                <td className="">Price</td>
-                <td className="">Amount</td>
+                <td className="">Item</td>
+                <td className="">Kuantitas</td>
+                <td className="">Harga</td>
+                <td className="">Jumlah</td>
             </tr>
         </thead>
+        
     {list.map(({ id, description, quantity, price, amount}) =>(
         <React.Fragment key={id}>
 <tbody>
@@ -148,7 +141,6 @@ const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
         </React.Fragment>
     ) )}
 </table>
-
 <div>
     <h2 className="flex items-end justify-end text-gray-800 text-4xl font-bold">Total. {total.toLocaleString()}</h2>
 </div>

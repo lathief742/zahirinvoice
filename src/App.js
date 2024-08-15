@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Footer from "./components/Footer";
 import Notes from "./components/Notes";
 import Table from "./components/Table";
@@ -31,12 +31,27 @@ function App() {
   const [list, setList] = useState([]);
   const [total, setTotal] = useState(0);
   const [logoUrl, setLogoUrl] = useState(""); // State for the logo data URL
+  const [title, setTitle] = useState("INVOICE");
+  const [discount, setDiscount] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [shipping, setShipping] = useState(0);
+
 
   const componentRef = useRef();
 
-  const handlePrint = () => {
-    window.print();
-  };
+  useEffect(() => {
+    const calculateTotal = () => {
+      let subtotal = list.reduce((sum, item) => sum + item.amount, 0);
+      let discountAmount = (subtotal * discount) / 100;
+      let taxAmount = (subtotal * tax) / 100;
+      let grandTotal = subtotal - discountAmount + taxAmount + parseFloat(shipping);
+      setTotal(grandTotal);
+    };
+  
+    calculateTotal();
+  }, [list, discount, tax, shipping]);
+  
+  
 
   // Function to handle file input and convert it to a data URL
   const handleLogoUpload = (e) => {
@@ -50,6 +65,11 @@ function App() {
     }
   };
 
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
+  
+
   return (
     <>
       <main className="m-5 p-5 md:max-w-xl md:mx-auto lg:max-w-2xl xl:max-w-4xl rounded shadow bg-white">
@@ -57,7 +77,9 @@ function App() {
           <>
             
             <div ref={componentRef}>
-              <Header handlePrint={handlePrint} image={logoUrl} />
+              <Header 
+              image={logoUrl}
+              title={title} />
 
               <MainDetails name={name} address={address} />
 
@@ -81,6 +103,9 @@ function App() {
                 setList={setList}
                 total={total}
                 setTotal={setTotal}
+                discount={discount}
+                tax={tax}
+                shipping={shipping}
               />
 
               <Notes notes={notes} />
@@ -101,7 +126,7 @@ function App() {
               border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 
               transition-all duration-300"
             >
-              Edit Information
+              Edit Informasi
             </button>
             <ReactToPrint
               trigger={() => (
@@ -119,27 +144,54 @@ function App() {
         ) : (
           <>
             {/* Form to input the logo file */}
-            <div className="flex flex-col">
-              <label htmlFor="logoFile">Upload your logo</label>
-              <input
-                type="file"
-                name="logoFile"
-                id="logoFile"
-                accept="image/*"
-                onChange={handleLogoUpload}
-              />
-            </div>
+           <div className="flex items-center justify-between mb-5">
+      {/* Logo section */}
+      <div className="flex items-center justify-center w-40 h-40 border-2 border-dashed border-gray-300 rounded-lg relative">
+        <input
+          type="file"
+          name="logoFile"
+          id="logoFile"
+          accept="image/*"
+          onChange={handleLogoUpload}
+          className="hidden"
+        />
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt="Logo Preview"
+            className="w-full h-full object-contain rounded-lg"
+          />
+        ) : (
+          <label
+            htmlFor="logoFile"
+            className="cursor-pointer text-center text-blue-500 hover:text-blue-700 transition-colors"
+          >
+            Tambah logo<br />
+            <span className="text-sm text-gray-500">+</span>
+          </label>
+        )}
+      </div>
 
+      {/* Title section */}
+      <input
+        type="text"
+        value={title}
+        onChange={handleTitleChange}
+        placeholder="Masukkan judul"
+        className="text-4xl text-black font-bold p-2 ml-4 w-60 bg-white"
+      />
+    </div>
+  
             {/* Additional form fields */}
             <div className="flex flex-col justify-center">
               <article className="md:grid grid-cols-2 gap-10">
                 <div className="flex flex-col">
-                  <label htmlFor="name">Your full name</label>
+                  <label htmlFor="name">Nama lengkap</label>
                   <input
                     type="text"
                     name="text"
                     id="name"
-                    placeholder="Enter your name"
+                    placeholder="Masukkan nama lengkap"
                     autoComplete="off"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -147,12 +199,12 @@ function App() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="address">Enter your address</label>
+                  <label htmlFor="address">Alamat</label>
                   <input
                     type="text"
                     name="address"
                     id="address"
-                    placeholder="Enter your address"
+                    placeholder="Masukkan alamat"
                     autoComplete="off"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -162,12 +214,12 @@ function App() {
 
               <article className="md:grid grid-cols-3 gap-10">
                 <div className="flex flex-col">
-                  <label htmlFor="email">Enter your email</label>
+                  <label htmlFor="email">Email</label>
                   <input
                     type="email"
                     name="email"
                     id="email"
-                    placeholder="Enter your email"
+                    placeholder="Masukkan email"
                     autoComplete="off"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -175,12 +227,12 @@ function App() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="website">Enter your website</label>
+                  <label htmlFor="website">Website</label>
                   <input
                     type="url"
                     name="website"
                     id="website"
-                    placeholder="Enter your website"
+                    placeholder="Masukkan url website"
                     autoComplete="off"
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
@@ -188,12 +240,12 @@ function App() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="phone">Enter your phone</label>
+                  <label htmlFor="phone">Nomor handphone</label>
                   <input
                     type="text"
                     name="phone"
                     id="phone"
-                    placeholder="Enter your phone"
+                    placeholder="Masukkan nomor handphone"
                     autoComplete="off"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -203,12 +255,12 @@ function App() {
 
               <article className="md:grid grid-cols-2 gap-10">
                 <div className="flex flex-col">
-                  <label htmlFor="bankName">Enter your bank name</label>
+                  <label htmlFor="bankName">Nama akun bank</label>
                   <input
                     type="text"
                     name="bankName"
                     id="bankName"
-                    placeholder="Enter your bank name"
+                    placeholder="Masukkan nama akun bank"
                     autoComplete="off"
                     value={bankName}
                     onChange={(e) => setBankName(e.target.value)}
@@ -217,13 +269,13 @@ function App() {
 
                 <div className="flex flex-col">
                   <label htmlFor="banKAccount">
-                    Enter your bank account number
+                    Nomor rekening bank
                   </label>
                   <input
                     type="text"
                     name="bankAccount"
                     id="bankAccount"
-                    placeholder="Enter your bank account number"
+                    placeholder="Masukkan nomor rekening bank"
                     autoComplete="off"
                     value={banKAccount}
                     onChange={(e) => setBankAccount(e.target.value)}
@@ -233,12 +285,12 @@ function App() {
 
               <article className="md:grid grid-cols-2 gap-10 md:mt-16">
                 <div className="flex flex-col">
-                  <label htmlFor="clientName">Enter your client's name</label>
+                  <label htmlFor="clientName">Nama klien</label>
                   <input
                     type="text"
                     name="clientName"
                     id="clientName"
-                    placeholder="Enter your bank client's name"
+                    placeholder="Masukkan nama klien"
                     autoComplete="off"
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
@@ -247,13 +299,13 @@ function App() {
 
                 <div className="flex flex-col">
                   <label htmlFor="clientAddress">
-                    Enter your client's address
+                    Alamat klien
                   </label>
                   <input
                     type="text"
                     name="clientAddress"
                     id="clientAddress"
-                    placeholder="Enter your bank client's address"
+                    placeholder="Masukkan alamat klien"
                     autoComplete="off"
                     value={clientAddress}
                     onChange={(e) => setClientAddress(e.target.value)}
@@ -263,12 +315,12 @@ function App() {
 
               <article className="md:grid grid-cols-3 gap-10">
                 <div className="flex flex-col">
-                  <label htmlFor="invoiceNumber">Invoice Number</label>
+                  <label htmlFor="invoiceNumber">Nomor invoice</label>
                   <input
                     type="text"
                     name="invoiceNumber"
                     id="invoiceNumber"
-                    placeholder="Invoice Number"
+                    placeholder="Masukkan nomor invoice"
                     autoComplete="off"
                     value={invoiceNumber}
                     onChange={(e) => setInvoiceNumber(e.target.value)}
@@ -276,12 +328,12 @@ function App() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="invoiceDate">Invoice Date</label>
+                  <label htmlFor="invoiceDate">Tanggal invoice</label>
                   <input
                     type="date"
                     name="invoiceDate"
                     id="invoiceDate"
-                    placeholder="Invoice Date"
+                    placeholder="Masukkan tanggal invoice"
                     autoComplete="off"
                     value={invoiceDate}
                     onChange={(e) => setinvoiceDate(e.target.value)}
@@ -289,7 +341,7 @@ function App() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="dueDate">Due Date</label>
+                  <label htmlFor="dueDate">Tanggal jatuh tempo</label>
                   <input
                     type="date"
                     name="dueDate"
@@ -319,13 +371,54 @@ function App() {
                 />
               </article>
 
-              <label htmlFor="notes">Additional Notes</label>
+              <article className="flex flex-col gap-4 items-end mt-10">
+  <div className="flex flex-row items-center justify-end w-full">
+    <label htmlFor="discount" className="w-1/3 text-right mr-4 mb-9 ">Discount (%)</label>
+    <input
+      type="number"
+      name="discount"
+      id="discount"
+      className="w-2/3 p-2 border rounded-md"
+      placeholder="Enter discount percentage"
+      value={discount}
+      onChange={(e) => setDiscount(e.target.value)}
+    />
+  </div>
+
+  <div className="flex flex-row items-center justify-end w-full">
+    <label htmlFor="tax" className="w-1/3 text-right mr-4 mb-9">Tax (%)</label>
+    <input
+      type="number"
+      name="tax"
+      id="tax"
+      className="w-2/3 p-2 border rounded-md"
+      placeholder="Enter tax percentage"
+      value={tax}
+      onChange={(e) => setTax(e.target.value)}
+    />
+  </div>
+
+  <div className="flex flex-row items-center justify-end w-full">
+    <label htmlFor="shipping" className="w-1/3 text-right mr-4 mb-9">Shipping</label>
+    <input
+      type="number"
+      name="shipping"
+      id="shipping"
+      className="w-2/3 p-2 border rounded-md"
+      placeholder="Enter shipping cost"
+      value={shipping}
+      onChange={(e) => setShipping(e.target.value)} 
+    />
+  </div>
+</article>
+
+              <label htmlFor="notes">Catatan tambahan</label>
               <textarea
                 name="notes"
                 id="notes"
                 cols="30"
                 rows="10"
-                placeholder="Additional Notes to the client"
+                placeholder="Catatan tambahan"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               ></textarea>
@@ -336,7 +429,7 @@ function App() {
                 border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 
                 transition-all duration-300"
               >
-                Preview Invoice
+                Lihat Invoice
               </button>
             </div>
           </>
