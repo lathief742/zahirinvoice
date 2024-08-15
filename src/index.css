@@ -23,6 +23,12 @@ input, textarea {
   color: #616161;
 }
 
+#logo {
+  width: 8rem;
+  height: 8rem;
+}
+
+
 .footer li{
   margin: 0.5rem 0.2rem;
 }

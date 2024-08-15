@@ -1,10 +1,9 @@
 import React, { Fragment } from 'react';
 
-export default function Table({ list }) {
+export default function Table({ list, total }) {
     return (
         <>
-        <div className="my-5">
-        <table width="100%" className="mb-10">
+        <table width="90%" className="mb-10 mt-10 ml-10">
 <thead>
             <tr className="bg-gray-100 p-1">
                 <td className="font-bold">Description</td>
@@ -26,7 +25,9 @@ export default function Table({ list }) {
         </React.Fragment>
     ) )}
 </table>
-        </div>
+<div>
+    <h2 className="flex items-end justify-end text-gray-800 text-4xl font-bold mr-10">Total. {total.toLocaleString()}</h2>
+</div>
         </>
     )
 }
