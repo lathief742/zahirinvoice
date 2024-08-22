@@ -1,149 +1,172 @@
-import { useState, useEffect } from "react"
-import { v4 as uuidv4} from "uuid"
+import { v4 as uuidv4 } from "uuid";
 import { MdDelete } from "react-icons/md";
-import React, { Fragment } from 'react';
-import { CiEdit } from "react-icons/ci";
 
 export default function TableForm({
-    description,
-    setDescription,
-    quantity,
-    setQuantity,
-    price,
-    setPrice,
-    amount,
-    setAmount,
-    list,
-    setList,
-    total,
-    setTotal
-  }) {
-  
-    const [isEditing, setIsEditing] = useState(false)
+  rows, setRows, discount, setDiscount, tax, setTax, shipping, setShipping
+}) {
+  // Calculate subtotal
+  const calculateSubtotal = () => {
+    return rows.reduce((acc, row) => acc + (parseFloat(row.amount) || 0), 0).toFixed(2);
+  };
 
-        // Submit form function
-    const handleSubmit = (e) => { 
-        e.preventDefault()
+  // Calculate discount amount
+  const calculateDiscount = () => {
+    const subtotal = parseFloat(calculateSubtotal()) || 0;
+    return ((subtotal * (parseFloat(discount) || 0)) / 100).toFixed(2);
+  };
 
-        if (!description || !quantity || !price) {
-            alert("Mohon isi semua input!");
-        } else {
-            const newItems = {
-                id: uuidv4(),
-                description,
-                quantity,
-                price,
-                amount
-            };
-            setDescription("");
-            setQuantity("");
-            setPrice("");
-            setAmount("");
-            setList([...list, newItems]);
-            setIsEditing(false);
-        }
-        
-     }
+  // Calculate tax amount
+  const calculateTax = () => {
+    const subtotal = parseFloat(calculateSubtotal()) || 0;
+    return ((subtotal * (parseFloat(tax) || 0)) / 100).toFixed(2);
+  };
 
-    //  calculate items amount function
-  useEffect(() => {
-    const calculateAmount = (amount) => {
-        setAmount(quantity * price)
-      }
-      calculateAmount(amount)
-  }, [amount, price, quantity, setAmount])
+  // Calculate grand total
+  const calculateGrandTotal = () => {
+    const subtotal = parseFloat(calculateSubtotal()) || 0;
+    const discountAmount = parseFloat(calculateDiscount()) || 0;
+    const taxAmount = parseFloat(calculateTax()) || 0;
+    const shippingAmount = parseFloat(shipping) || 0;
+    const grandTotal = subtotal - discountAmount + taxAmount + shippingAmount;
+    return grandTotal.toFixed(2);
+  };
 
-//   Calculate total amount of items in table
+  const handleChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedRows = [...rows];
+    updatedRows[index] = { ...updatedRows[index], [name]: value };
 
+    if (name === "quantity" || name === "price") {
+      const quantity = parseFloat(updatedRows[index].quantity) || 0;
+      const price = parseFloat(updatedRows[index].price) || 0;
+      updatedRows[index].amount = (quantity * price).toFixed(2);
+    }
 
+    setRows(updatedRows);
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setRows([...rows, { id: uuidv4(), description: "", quantity: "", price: "", amount: 0 }]);
+  };
 
+  const deleteRow = (id) => {
+    setRows(rows.filter((row) => row.id !== id));
+  };
 
-//   Edit function
-const editRow = (id) => {
-    const editingRow = list.find((row) => row.id === id)
-    setList(list.filter((row) => row.id !== id))
-    setIsEditing(true)
-    setDescription(editingRow.description)
-    setQuantity(editingRow.quantity)
-    setPrice(editingRow.price)
-}
-// Delete function
-const deleteRow = (id) =>  setList(list.filter((row) => row.id !== id))
-
-    return (
+  return (
     <>
+      <form onSubmit={handleSubmit}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-200 mb-10">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 p-2">Description</th>
+                <th className="border border-gray-300 p-2">Quantity</th>
+                <th className="border border-gray-300 p-2">Price</th>
+                <th className="border border-gray-300 p-2">Amount</th>
+                <th className="border border-gray-300 p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, index) => (
+                <tr key={row.id}>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="text"
+                      name="description"
+                      value={row.description}
+                      onChange={(e) => handleChange(index, e)}
+                      className="w-full p-1"
+                      placeholder="Item description"
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={row.quantity}
+                      onChange={(e) => handleChange(index, e)}
+                      className="w-full p-1"
+                      placeholder="Quantity"
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="number"
+                      name="price"
+                      value={row.price}
+                      onChange={(e) => handleChange(index, e)}
+                      className="w-full p-1"
+                      placeholder="Price"
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="text"
+                      name="amount"
+                      value={parseFloat(row.amount).toFixed(2)}
+                      readOnly
+                      className="w-full p-1"
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2 text-center">
+                    <button type="button" onClick={() => deleteRow(row.id)} className="text-red-500">
+                      <MdDelete className="text-xl" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white font-bold py-2 px-8 rounded shadow border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300"
+        >
+          Add Table Item
+        </button>
+      </form>
 
-<form onSubmit={handleSubmit}>
-     <div className="md:grid grid-cols-4 gap-10">
-     <div className="flex flex-col">
-     <label htmlFor="description">Item</label>
-      <input type="text" name="description" 
-      id="description" 
-      placeholder="Item description"
-      value={description} 
-      onChange={(e) => setDescription(e.target.value)} />
-     </div>
-     <div className="flex flex-col">
-     <label htmlFor="quantity">Kuantitas</label>
-      <input type="text" name="quantity" 
-      id="quantity" 
-      placeholder="Quantity"
-      value={quantity} 
-      onChange={(e) => setQuantity(e.target.value)} />
-     </div>
+      <div className="mt-4">
+        <div className="flex flex-wrap justify-end gap-4 mb-4">
+          <div className="w-full sm:w-auto">
+            <label>Discount (%): </label>
+            <input
+              type="number"
+              value={discount}
+              onChange={(e) => setDiscount(e.target.value)}
+              className="p-1 border border-gray-300 w-full sm:w-24"
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <label>Tax (%): </label>
+            <input
+              type="number"
+              value={tax}
+              onChange={(e) => setTax(e.target.value)}
+              className="p-1 border border-gray-300 w-full sm:w-24"
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <label>Shipping: </label>
+            <input
+              type="number"
+              value={shipping}
+              onChange={(e) => setShipping(e.target.value)}
+              className="p-1 border border-gray-300 w-full sm:w-24"
+            />
+          </div>
+        </div>
 
-     <div className="flex flex-col">
-     <label htmlFor="price">Harga</label>
-      <input type="text" name="price" 
-      id="price" 
-      placeholder="Item price"
-      value={price} 
-      onChange={(e) => setPrice(e.target.value)} />
-     </div>
-
-     <div className="flex flex-col">
-        <label htmlFor="amount">Jumlah</label>
-        <p>{amount}</p>
-     </div>
-     </div>
-     
-     <button type="submit" className="mb-5 bg-blue-500 text-white font-bold py-2 px-8 rounded shadow 
-      border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 
-      transition-all duration-300">
-      {isEditing ? "Editing Row Item" : "Add Table Item"}</button>
-     </form>
-
-{/* Table items */}
-
-<table width="100%" className="mb-10">
-<thead>
-            <tr className="bg-gray-100 p-1">
-                <td className="">Item</td>
-                <td className="">Kuantitas</td>
-                <td className="">Harga</td>
-                <td className="">Jumlah</td>
-            </tr>
-        </thead>
-        
-    {list.map(({ id, description, quantity, price, amount}) =>(
-        <React.Fragment key={id}>
-<tbody>
-<tr>
-<td>{description}</td>
-<td>{quantity}</td>
-<td>{price}</td>
-<td className="amount">{amount}</td>
-<td><button onClick={() => deleteRow(id)}><MdDelete className="text-red-500 font-bold text-xl" /></button></td>
-<td><button onClick={() => editRow(id)}><CiEdit className="text-green-500 font-bold text-xl"/></button></td>
-</tr>
-</tbody>
-        </React.Fragment>
-    ) )}
-</table>
-<div>
-    <h2 className="flex items-end justify-end text-gray-800 text-4xl font-bold">Total. {total.toLocaleString()}</h2>
-</div>
+        <div className="text-right">
+          <h2 className="text-lg sm:text-xl">Subtotal: ${calculateSubtotal()}</h2>
+          <h2 className="text-lg sm:text-xl">Discount: -${calculateDiscount()}</h2>
+          <h2 className="text-lg sm:text-xl">Tax: +${calculateTax()}</h2>
+          <h2 className="text-lg sm:text-xl">Shipping: +${parseFloat(shipping || 0).toFixed(2)}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">Grand Total: ${calculateGrandTotal()}</h2>
+        </div>
+      </div>
     </>
-  )
+  );
 }

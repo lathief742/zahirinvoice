@@ -7,7 +7,7 @@ export default function Header({ image, title }) {
             src={image}
             alt="Uploaded Logo"
             id="logo"
-            className="w-28 h-28 mr-auto" // Add mr-auto to push the logo to the right
+            className="w-32 h-32 mr-auto" // Add mr-auto to push the logo to the right
           />
         )}
         <h2 className="font-bold uppercase tracking-wide text-4xl mr-10">
